@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 
 @interface MapViewController : UIViewController
 @property double latitude;
 @property double longitude;
 @property NSString *stationName;
+@property CLLocation *currentLocation;
 
 @end

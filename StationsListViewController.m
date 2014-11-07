@@ -39,10 +39,6 @@
              NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
              NSArray *jsonArray = jsonDictionary[@"stationBeanList"];
              self.stationBeanArray = [jsonArray mutableCopy];
-
-
-
-
              [self.tableView reloadData];
          }
      }];
@@ -130,6 +126,7 @@
     mvc.latitude = [resultDictionary[@"latitude"] doubleValue];
     mvc.longitude = [resultDictionary[@"longitude"] doubleValue];
     mvc.stationName = resultDictionary[@"stAddress1"];
+    mvc.currentLocation = self.currentLocation;
 }
 
 #pragma mark - UITableView

@@ -30,6 +30,11 @@
     self.stationAnnotation.coordinate = center;
     [self.mapView addAnnotation:self.stationAnnotation];
 
+    self.userAnnotation = [[MKPointAnnotation alloc]init];
+    self.userAnnotation.title = @"Current Location";
+    self.userAnnotation.coordinate = self.currentLocation.coordinate;
+    [self.mapView addAnnotation:self.userAnnotation];
+
     MKCoordinateSpan coordinateSpan;
     coordinateSpan.latitudeDelta = 0.05;
     coordinateSpan.longitudeDelta = 0.05;
@@ -56,39 +61,25 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
-{
-    [self Error:error];
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
-{
-    for (CLLocation *location in locations)
-    {
-        if (location.verticalAccuracy <1000 && location.horizontalAccuracy < 1000)
-        {
-            [self reverseGeocode:location];
-            [self.manager stopUpdatingLocation];
-            break;
-        }
-    }
-}
-
-- (void)reverseGeocode:(CLLocation *)location
-{
-    CLGeocoder *geocoder = [CLGeocoder new];
-    [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, id error)
-     {
-         CLPlacemark *placemark = placemarks.firstObject;
-         self.userAnnotation = [[MKPointAnnotation alloc]init];
-         self.userAnnotation.title = @"Current Location";
-         self.userAnnotation.coordinate = placemark.location.coordinate;
-
-         [self.mapView addAnnotation:self.userAnnotation];
-//         [self findJailNear: placemark.location];
-     }];
-}
-
+//- (void)getDirectionsTo:(MKMapItem *)destinationItem
+//{
+//    MKDirectionsRequest *request = [MKDirectionsRequest new];
+//    request.source = [MKMapItem mapItemForCurrentLocation];
+//    request.destination = destinationItem;
+//    MKDirections *directions = [[MKDirections alloc] initWithRequest:request];
+//    [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, id error) {
+//        NSArray *routes = response.routes;
+//        MKRoute *route = routes.firstObject;
+//        int i = 1;
+//        NSMutableString *directionsString = [NSMutableString string];
+//        for (MKRouteStep *step in route.steps)
+//        {
+//            [directionsString appendFormat:@"%d: %@\n", i, step.instructions];
+//            i++;
+//        }
+//        self.myTextView.text = directionsString;
+//    }];
+//}
 
 -(MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
 {
