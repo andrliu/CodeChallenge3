@@ -8,11 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
+#import "ALMapItem.h"
 
 @interface MapViewController : UIViewController
-@property double latitude;
-@property double longitude;
-@property NSString *stationName;
+@property ALMapItem *mapItem;
 @property CLLocation *currentLocation;
 
 @end

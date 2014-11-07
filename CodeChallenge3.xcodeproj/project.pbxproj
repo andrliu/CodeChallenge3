@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		49B5B8121A0D40EE003E8538 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B5B8111A0D40EE003E8538 /* CoreLocation.framework */; };
+		49B5B8151A0D7164003E8538 /* ALMapItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B5B8141A0D7164003E8538 /* ALMapItem.m */; };
 		938C35E919F02E16000F4F50 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 938C35E819F02E16000F4F50 /* main.m */; };
 		938C35EC19F02E16000F4F50 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 938C35EB19F02E16000F4F50 /* AppDelegate.m */; };
 		938C35F219F02E16000F4F50 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 938C35F019F02E16000F4F50 /* Main.storyboard */; };
@@ -31,6 +32,8 @@
 
 /* Begin PBXFileReference section */
 		49B5B8111A0D40EE003E8538 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		49B5B8131A0D7164003E8538 /* ALMapItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALMapItem.h; sourceTree = "<group>"; };
+		49B5B8141A0D7164003E8538 /* ALMapItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALMapItem.m; sourceTree = "<group>"; };
 		938C35E319F02E16000F4F50 /* CodeChallenge3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeChallenge3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		938C35E719F02E16000F4F50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		938C35E819F02E16000F4F50 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -97,6 +100,8 @@
 				938C360D19F02F62000F4F50 /* StationsListViewController.m */,
 				938C360F19F02F6E000F4F50 /* MapViewController.h */,
 				938C361019F02F6E000F4F50 /* MapViewController.m */,
+				49B5B8131A0D7164003E8538 /* ALMapItem.h */,
+				49B5B8141A0D7164003E8538 /* ALMapItem.m */,
 				938C35EA19F02E16000F4F50 /* AppDelegate.h */,
 				938C35F019F02E16000F4F50 /* Main.storyboard */,
 				938C35F319F02E16000F4F50 /* Images.xcassets */,
@@ -236,6 +241,7 @@
 				938C35EC19F02E16000F4F50 /* AppDelegate.m in Sources */,
 				938C35E919F02E16000F4F50 /* main.m in Sources */,
 				938C361119F02F6E000F4F50 /* MapViewController.m in Sources */,
+				49B5B8151A0D7164003E8538 /* ALMapItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

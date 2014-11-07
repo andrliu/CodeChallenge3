@@ -8,6 +8,7 @@
 
 #import "StationsListViewController.h"
 #import "MapViewController.h"
+#import "ALMapItem.h"
 @import CoreLocation;
 #define kStationBeanList @"http://www.bayareabikeshare.com/stations/json"
 
@@ -38,7 +39,42 @@
          {
              NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
              NSArray *jsonArray = jsonDictionary[@"stationBeanList"];
-             self.stationBeanArray = [jsonArray mutableCopy];
+             for (NSDictionary *dict in jsonArray)
+             {
+                 ALMapItem *bikeStation = [[ALMapItem alloc] init];
+
+                 bikeStation.stationName= dict[@"stationName"];
+
+                 bikeStation.availableBikes= dict[@"availableBikes"];
+
+                 bikeStation.latitude = [dict[@"latitude"] doubleValue];
+
+                 bikeStation.longitude = [dict[@"longitude"] doubleValue];
+
+                 CLLocation *bikeStationLocation = [[CLLocation alloc]initWithLatitude:bikeStation.latitude longitude:bikeStation.longitude];
+
+                 bikeStation.distance = [bikeStationLocation distanceFromLocation: self.manager.location];
+
+                 [self.stationBeanArray addObject:bikeStation];
+
+             }
+
+             self.stationBeanArray = [[self.stationBeanArray sortedArrayUsingComparator:^NSComparisonResult(ALMapItem *obj1, ALMapItem *obj2)
+                                   {
+
+                                       if (obj1.distance < obj2.distance)
+                                       {
+                                           return (NSComparisonResult)NSOrderedAscending;
+                                       }
+
+                                       if (obj1.distance > obj2.distance)
+                                       {
+                                           return (NSComparisonResult)NSOrderedDescending;
+                                       }
+                                       return (NSComparisonResult)NSOrderedSame;
+                                       
+                                   }] mutableCopy];
+
              [self.tableView reloadData];
          }
      }];
@@ -90,42 +126,12 @@
      }];
 }
 
-
-
-//pizzria.address = [NSString stringWithFormat:@"%@ %@ %@ %@", mapItem.placemark.subThoroughfare,mapItem.placemark.thoroughfare,mapItem.placemark.locality, mapItem.placemark.administrativeArea];
-//
-//pizzria.distance = [mapItem.placemark.location distanceFromLocation: self.manager.location];
-//
-//[self.listArray addObject:pizzria];
-//
-//}
-//
-//self.currentArray = [[self.listArray sortedArrayUsingComparator:^NSComparisonResult(ALMapItem *obj1, ALMapItem *obj2)
-//                      {
-//
-//                          if (obj1.distance < obj2.distance)
-//                          {
-//                              return (NSComparisonResult)NSOrderedAscending;
-//                          }
-//
-//                          if (obj1.distance > obj2.distance)
-//                          {
-//                              return (NSComparisonResult)NSOrderedDescending;
-//                          }
-//                          return (NSComparisonResult)NSOrderedSame;
-//
-//                      }] mutableCopy];
-
-
-
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     MapViewController *mvc = segue.destinationViewController;
     NSInteger rowNumber = [self.tableView indexPathForSelectedRow].row;
-    NSDictionary *resultDictionary  = [self.stationBeanArray objectAtIndex:rowNumber];
-    mvc.latitude = [resultDictionary[@"latitude"] doubleValue];
-    mvc.longitude = [resultDictionary[@"longitude"] doubleValue];
-    mvc.stationName = resultDictionary[@"stAddress1"];
+    ALMapItem *mapItem = [self.stationBeanArray objectAtIndex:rowNumber];
+    mvc.mapItem = mapItem;
     mvc.currentLocation = self.currentLocation;
 }
 
@@ -140,11 +146,11 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
-    NSDictionary *resultDictionary = self.stationBeanArray [indexPath.row];
+    ALMapItem *mapItem = self.stationBeanArray [indexPath.row];
 
-    cell.textLabel.text = [NSString stringWithFormat:@"Location: %@", resultDictionary[@"stationName"]];
+    cell.textLabel.text = [NSString stringWithFormat:@"Location: %@", mapItem.stationName];
 
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"Available: %@", resultDictionary[@"availableBikes"]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"Available: %@, Distance: %f", mapItem.availableBikes, mapItem.distance];
 
     return cell;
 }

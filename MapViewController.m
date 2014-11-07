@@ -15,6 +15,7 @@
 @property (strong, nonatomic) IBOutlet MKMapView *mapView;
 @property MKPointAnnotation *stationAnnotation;
 @property MKPointAnnotation *userAnnotation;
+@property MKMapItem *userMapItem;
 @property CLLocationManager *manager;
 
 @end
@@ -24,9 +25,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(self.latitude, self.longitude);
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(self.mapItem.latitude, self.mapItem.longitude);
     self.stationAnnotation = [[MKPointAnnotation alloc]init];
-    self.stationAnnotation.title = self.stationName;
+    self.stationAnnotation.title = self.mapItem.name;
     self.stationAnnotation.coordinate = center;
     [self.mapView addAnnotation:self.stationAnnotation];
 
@@ -61,25 +62,25 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-//- (void)getDirectionsTo:(MKMapItem *)destinationItem
-//{
-//    MKDirectionsRequest *request = [MKDirectionsRequest new];
-//    request.source = [MKMapItem mapItemForCurrentLocation];
-//    request.destination = destinationItem;
-//    MKDirections *directions = [[MKDirections alloc] initWithRequest:request];
-//    [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, id error) {
-//        NSArray *routes = response.routes;
-//        MKRoute *route = routes.firstObject;
-//        int i = 1;
-//        NSMutableString *directionsString = [NSMutableString string];
-//        for (MKRouteStep *step in route.steps)
-//        {
-//            [directionsString appendFormat:@"%d: %@\n", i, step.instructions];
-//            i++;
-//        }
-//        self.myTextView.text = directionsString;
-//    }];
-//}
+- (void)getDirectionsTo:(MKMapItem *)destinationItem
+{
+    MKDirectionsRequest *request = [MKDirectionsRequest new];
+    request.source = [MKMapItem mapItemForCurrentLocation];
+    request.destination = destinationItem;
+    MKDirections *directions = [[MKDirections alloc] initWithRequest:request];
+    [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, id error) {
+        NSArray *routes = response.routes;
+        MKRoute *route = routes.firstObject;
+        int i = 1;
+        NSMutableString *directionsString = [NSMutableString string];
+        for (MKRouteStep *step in route.steps)
+        {
+            [directionsString appendFormat:@"%d: %@\n", i, step.instructions];
+            i++;
+        }
+        self.myTextView.text = directionsString;
+    }];
+}
 
 -(MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
 {
