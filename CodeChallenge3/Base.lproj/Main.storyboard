@@ -69,7 +69,13 @@
                             <constraint firstItem="LmZ-8o-mni" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="wD6-3T-rWD"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="QJ4-JN-pgb"/>
+                    <navigationItem key="navigationItem" id="QJ4-JN-pgb">
+                        <barButtonItem key="rightBarButtonItem" title="Sort" id="Efl-hC-D1L">
+                            <connections>
+                                <action selector="sortDistanceOnButtonPressed:" destination="BYZ-38-t0r" id="ceY-QS-Szc"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="searchBar" destination="Tqs-s4-Eet" id="qQh-Rs-Bu4"/>
                         <outlet property="tableView" destination="LmZ-8o-mni" id="7HP-MN-qD6"/>

@@ -20,6 +20,7 @@
 @property CLLocationManager *manager;
 @property CLLocation *currentLocation;
 
+
 @end
 
 @implementation StationsListViewController
@@ -27,7 +28,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.stationBeanArray = [NSMutableArray array];
-    NSURL *url = [NSURL URLWithString:kStationBeanList];
+
+    self.manager = [[CLLocationManager alloc]init];
+    [self.manager requestAlwaysAuthorization];
+    [self.manager startUpdatingLocation];
+    self.manager.delegate = self;
+
+    self.navigationItem.title = @"Locating...";
+
+}
+
+- (void)loadJson:(NSString *)json
+{
+    NSURL *url = [NSURL URLWithString:json];
     NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
     [NSURLConnection sendAsynchronousRequest:urlRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError)
      {
@@ -57,31 +70,35 @@
 
                  [self.stationBeanArray addObject:bikeStation];
 
+                 [self.tableView reloadData];
+
+                 self.navigationItem.title = @"Bike station info";
              }
-
-             self.stationBeanArray = [[self.stationBeanArray sortedArrayUsingComparator:^NSComparisonResult(ALMapItem *obj1, ALMapItem *obj2)
-                                   {
-
-                                       if (obj1.distance < obj2.distance)
-                                       {
-                                           return (NSComparisonResult)NSOrderedAscending;
-                                       }
-
-                                       if (obj1.distance > obj2.distance)
-                                       {
-                                           return (NSComparisonResult)NSOrderedDescending;
-                                       }
-                                       return (NSComparisonResult)NSOrderedSame;
-                                       
-                                   }] mutableCopy];
-
-             [self.tableView reloadData];
          }
      }];
-    self.manager = [[CLLocationManager alloc]init];
-    [self.manager requestAlwaysAuthorization];
-    [self.manager startUpdatingLocation];
-    self.manager.delegate = self;
+}
+
+- (IBAction)sortDistanceOnButtonPressed:(UIBarButtonItem *)sender
+{
+    self.stationBeanArray = [[self.stationBeanArray sortedArrayUsingComparator:^NSComparisonResult(ALMapItem *obj1, ALMapItem *obj2){
+
+                                  if (obj1.distance < obj2.distance)
+                                  {
+                                      return (NSComparisonResult)NSOrderedAscending;
+                                  }
+
+                                  if (obj1.distance > obj2.distance)
+                                  {
+                                      return (NSComparisonResult)NSOrderedDescending;
+                                  }
+                                  return (NSComparisonResult)NSOrderedSame;
+
+                              }] mutableCopy];
+
+    [self.tableView reloadData];
+
+    self.navigationItem.title = @"Sotred by distance";
+
 }
 
 - (void)Error:(NSError *)error
@@ -98,7 +115,7 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     [self Error:error];
 }
@@ -123,6 +140,7 @@
      {
          CLPlacemark *placemark = placemarks.firstObject;
          self.currentLocation = placemark.location;
+         [self loadJson:kStationBeanList];
      }];
 }
 

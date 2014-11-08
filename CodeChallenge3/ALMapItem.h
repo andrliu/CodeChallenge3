@@ -9,6 +9,7 @@
 #import <MapKit/MapKit.h>
 
 @interface ALMapItem : MKMapItem
+
 @property NSString *stationName;
 @property NSString *availableBikes;
 @property double latitude;
