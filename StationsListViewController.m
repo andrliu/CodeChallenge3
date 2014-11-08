@@ -12,13 +12,16 @@
 @import CoreLocation;
 #define kStationBeanList @"http://www.bayareabikeshare.com/stations/json"
 
-@interface StationsListViewController () <UITabBarDelegate, UITableViewDataSource, CLLocationManagerDelegate>
+@interface StationsListViewController () <UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate, UISearchBarDelegate>
 
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property NSMutableArray *stationBeanArray;
+@property NSMutableArray *currentArray;
+@property NSArray *dataArrray;
 @property CLLocationManager *manager;
 @property CLLocation *currentLocation;
+@property BOOL isSearched;
 
 
 @end
@@ -28,6 +31,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.stationBeanArray = [NSMutableArray array];
+    self.currentArray = [NSMutableArray array];
+    self.dataArrray = [NSArray array];
 
     self.manager = [[CLLocationManager alloc]init];
     [self.manager requestAlwaysAuthorization];
@@ -52,7 +57,8 @@
          {
              NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
              NSArray *jsonArray = jsonDictionary[@"stationBeanList"];
-             for (NSDictionary *dict in jsonArray)
+             self.dataArrray = jsonArray;
+             for (NSDictionary *dict in self.dataArrray)
              {
                  ALMapItem *bikeStation = [[ALMapItem alloc] init];
 
@@ -70,6 +76,8 @@
 
                  [self.stationBeanArray addObject:bikeStation];
 
+                 self.currentArray = self.stationBeanArray;
+
                  [self.tableView reloadData];
 
                  self.navigationItem.title = @"Bike station info";
@@ -80,7 +88,7 @@
 
 - (IBAction)sortDistanceOnButtonPressed:(UIBarButtonItem *)sender
 {
-    self.stationBeanArray = [[self.stationBeanArray sortedArrayUsingComparator:^NSComparisonResult(ALMapItem *obj1, ALMapItem *obj2){
+    self.currentArray = [[self.currentArray sortedArrayUsingComparator:^NSComparisonResult(ALMapItem *obj1, ALMapItem *obj2){
 
                                   if (obj1.distance < obj2.distance)
                                   {
@@ -148,23 +156,64 @@
 {
     MapViewController *mvc = segue.destinationViewController;
     NSInteger rowNumber = [self.tableView indexPathForSelectedRow].row;
-    ALMapItem *mapItem = [self.stationBeanArray objectAtIndex:rowNumber];
+    ALMapItem *mapItem = [self.currentArray objectAtIndex:rowNumber];
     mvc.mapItem = mapItem;
     mvc.currentLocation = self.currentLocation;
 }
+
+
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    searchText = self.searchBar.text;
+
+    if (searchText.length == 0)
+    {
+        self.currentArray = self.stationBeanArray;
+    }
+    else
+    {
+        [self.currentArray removeAllObjects];
+        for (NSDictionary *dict in self.dataArrray)
+        {
+            if ([[dict[@"stationName"] lowercaseString] containsString:[searchText lowercaseString]])
+            {
+
+                ALMapItem *bikeStation = [[ALMapItem alloc] init];
+
+                bikeStation.stationName= dict[@"stationName"];
+
+                bikeStation.availableBikes= dict[@"availableBikes"];
+
+                bikeStation.latitude = [dict[@"latitude"] doubleValue];
+
+                bikeStation.longitude = [dict[@"longitude"] doubleValue];
+
+                CLLocation *bikeStationLocation = [[CLLocation alloc]initWithLatitude:bikeStation.latitude longitude:bikeStation.longitude];
+
+                bikeStation.distance = [bikeStationLocation distanceFromLocation: self.manager.location];
+
+                [self.currentArray addObject: bikeStation];
+            }
+        }
+    }
+    [self.tableView reloadData];
+}
+
+
 
 #pragma mark - UITableView
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.stationBeanArray.count;
+    return self.currentArray.count;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
-    ALMapItem *mapItem = self.stationBeanArray [indexPath.row];
+    ALMapItem *mapItem = self.currentArray [indexPath.row];
 
     cell.textLabel.text = [NSString stringWithFormat:@"Location: %@", mapItem.stationName];
 

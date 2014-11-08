@@ -28,6 +28,9 @@
                                         <string>Title</string>
                                         <string>Title</string>
                                     </scopeButtonTitles>
+                                    <connections>
+                                        <outlet property="delegate" destination="BYZ-38-t0r" id="G0f-9g-RxI"/>
+                                    </connections>
                                 </searchBar>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="gsd-AE-h5L" detailTextLabel="eri-8C-H8Q" rowHeight="100" style="IBUITableViewCellStyleSubtitle" id="TdW-st-Bf8">
